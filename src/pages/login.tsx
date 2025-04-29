@@ -12,10 +12,10 @@ export default function Login() {
   
   function handlerLogin(event: any) {
     event.preventDefault();
-    
-    if(email === 'rodino@gmail.com' && senha === '123'){
-      navigate('/')
-    }
+    navigate('/')
+    // if(email === 'rodino@gmail.com' && senha === '123'){
+    //   navigate('/')
+    // }
   }
 
   return (
