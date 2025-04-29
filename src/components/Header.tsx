@@ -7,7 +7,7 @@ export function Header() {
   const navigate = useNavigate()
   return (
  
-      <div className="bg-zinc-50 p-4 text-white flex justify-between items-center shadow-inherit    ">
+      <div className="bg-sky-50 p-4 text-white flex justify-between items-center shadow-inherit    ">
         <div className="ml-10">
           <img src="icon_02.png" className="w-12"/>
         </div>
