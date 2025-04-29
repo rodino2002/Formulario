@@ -1,6 +1,7 @@
 import { Route, Routes, BrowserRouter } from "react-router"
-import App from "../pages/App"
-
+import Login from "../pages/login"
+import Dashboard from "../pages/dashboard"
+import Formulario from "../pages/formlario"
 
 
 export const Routers = () => {
@@ -9,8 +10,9 @@ export const Routers = () => {
     return (
         <BrowserRouter>
             <Routes>
-                    <Route path="/" element={<App/>} />
-                   
+                    <Route path="/" element={<Dashboard/>} />
+                    <Route path="/login" element={<Login/>} />
+                    <Route path="/inscricao" element={<Formulario/>} />
             </Routes>
         </BrowserRouter>
 
