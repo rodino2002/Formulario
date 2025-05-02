@@ -4,4 +4,13 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api-js-xvw4.onrender.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  }
 })

@@ -1,9 +1,65 @@
 //import { useState } from 'react'
 
+import axios from "axios"
 import { Header } from "../components/Header"
+import { useEffect, useState } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import ModalEdit from "../components/editModal"
+import ModalDelete from "../components/deleteModal"
 
-
+type Props = {
+  id: number
+  nome: string
+  atributo: string
+  orgao: string
+  observacao: string
+}
 export default function Dashboard() {
+const [dataList, setDataList] = useState<Props[]>([])
+const [showModalEdit, setShowModalEdit] = useState(false)
+const [itemdata, setItemdata] = useState<Props | null>(null)
+const [idUser, setIdUser] = useState<number | string>(0)
+
+ async function getDataList(){
+  try {
+    const {data} = await axios.get('/api/delegados')
+    setDataList(data)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+ 
+  }
+
+  useEffect(() => {
+    getDataList()
+  },[])
+
+  useQuery({
+    queryKey: ['delegados'],
+    queryFn: getDataList,
+    //refetchOnWindowFocus: false,
+  })
+
+  const [showModalDelete, setShowModalDelete] = useState(false)
+console.log(showModalDelete)  
+  const queryClient = useQueryClient()
+
+  async function deleteData(id: number|string) {
+    try {
+      await axios.delete(`api/delegados/${id}`)
+
+      queryClient.invalidateQueries({
+        queryKey: ['delegados']
+      })
+
+      setShowModalDelete(false)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   return (
     <>
@@ -57,13 +113,15 @@ export default function Dashboard() {
             </thead>
 
             <tbody>
+              {dataList?.map((item)=>
               <tr className=" p-2 text-sm h-14 odd:bg-white even:bg-[#F8FAFC] hover:bg-zinc-100 duration-300 ">
-                <td className="text-center p-4">Feliciano Hekele Rodino</td>
-                <td className="text-center p-4">Delegado</td>
-                <td className="text-center p-4"> Associação Oeste </td>
-                <td className="text-center" >Observação para teste ...</td>
+                <td className="text-center p-4">{item?.nome}</td>
+                <td className="text-center p-4">{item?.atributo}</td>
+                <td className="text-center p-4"> {item?.orgao} </td>
+                <td className="text-center" >{item?.observacao}</td>
                 <td className="flex space-x-1 items-center px-4">
 
+                  {/*editar */}
                   <p className="mt-4">
                     <svg
                       className="group-hover:text-white text-[#1FC16B]"
@@ -72,7 +130,9 @@ export default function Dashboard() {
                       height="30"
                       viewBox="0 0 36 36"
                       fill="none"
-                    //onClick={openEditUserModal}
+                    onClick={()=>{
+                      setItemdata(item)
+                      setShowModalEdit(true)}}
                     >
                       <rect
                         width="36"
@@ -95,11 +155,17 @@ export default function Dashboard() {
                       />
                     </svg>
                   </p>
+  {showModalEdit && <ModalEdit onClose={setShowModalEdit} itemSelected={itemdata}/>}
+                  {/*deletar */}
                   <p className="mt-4">
                     <svg
-                      //onClick={() => {
-                      // setItemdata(item);
-                      //}}
+                      onClick={() => 
+                      {
+                        setIdUser(item?.id)
+                        setShowModalDelete(true)
+                      }
+                       
+                      }
                       className="group-hover:text-white text-[#EB5656]"
                       xmlns="http://www.w3.org/2000/svg"
                       width="30"
@@ -121,14 +187,16 @@ export default function Dashboard() {
                         stroke-width="0.3"
                       />
                     </svg>
+                    
                   </p>
                 </td>
-              </tr>
+              </tr> )}
 
 
 
             </tbody>
           </table>
+          {showModalDelete&&<ModalDelete setShowModalDelete={setShowModalDelete} deleteFunction={deleteData} idUser={idUser}/>}
         </div>
 
       </div>

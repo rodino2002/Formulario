@@ -1,13 +1,68 @@
+import { useQueryClient } from "@tanstack/react-query"
+import axios from "axios"
+import { useState } from "react"
 
+// type dataType = {
+//   id: number
+//   nome: string
+//   atributo: string
+//   orgao: string
+//   observacao: string
+// }
 
 export default function Formulario() {
-  /*Nome
-  *
-  Atributo
-  *
-  
+  const queryClient = useQueryClient()
 
-  Observação*/
+    const [formData, setFormData] = useState({
+        nome: "",
+        atributo: "",
+        orgao: "",
+        observacao: "",
+    })
+
+    const clearForm = () => {
+      setFormData({
+      nome: "",
+      atributo: "",
+      orgao: "",
+      observacao: "",})
+  }
+
+    async function addData(e: React.FormEvent<HTMLFormElement>) {
+            e.preventDefault();
+    
+            //const [loading, setLoading] = useState(false)
+            //const [isLoading, setisLoading] = useState(false)
+            const params = {
+                nome: formData.nome,
+                atributo: formData.atributo,
+                orgao: formData.orgao,
+                observacao: formData.observacao,
+            }
+            
+    
+            try {
+               // setLoading(true)
+                await axios.post(`/api/delegados`, params)
+    
+                queryClient.invalidateQueries({
+                    queryKey: ['delegados']
+                })
+
+                clearForm()
+                
+               // onClose(false)
+                //setLoading(false)
+                //return data
+            } catch (error) {
+                console.log(error)
+                //setLoading(false)
+                alert("registo adicionado com sucesso")
+            }
+        }
+        
+
+
   return (
     <>
     <div className="ml-10 pt-2">
@@ -20,7 +75,7 @@ export default function Formulario() {
           dos Adventistas do Sétimo Dia - Movimento de Reforma.</p>
 
         
-        <form className="mt-10 p-10 w-[60%] rounded-lg ring-1 ring-zinc-100 shadow-lg border-t-10 border-sky-800">
+        <form onSubmit={addData} className="mt-10 p-10 w-[60%] rounded-lg ring-1 ring-zinc-100 shadow-lg border-t-10 border-sky-800">
         <div className=" text-sky-800 p-4 mb-5 grid grid-cols-1 place-items-center"><svg xmlns="http://www.w3.org/2000/svg"
          width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" className="lucide lucide-notebook-pen-icon lucide-notebook-pen">
@@ -31,13 +86,14 @@ export default function Formulario() {
 
               <div className="flex flex-col space-y-2">
                 <label className="text-[#474747] text-sm">Nome Completo</label>
-                <input required type="text" placeholder="digite seu nome"
+                <input required type="text" value={formData.nome} onChange={(e)=>setFormData({...formData, nome: e.target.value})} placeholder="digite seu nome"
                   className="ring-1 ring-zinc-100 p-2 text-sm text-[#474747] rounded-lg focus:outline-none 
            focus:ring-1 focus:ring-sky-800 " />
               </div>
               <div className="flex flex-col space-y-2">
                 <label className="text-[#474747] text-sm">Atributo</label>
                 <select 
+                value={formData.atributo} onChange={(e)=>setFormData({...formData, atributo: e.target.value})}
                 required 
 
                  className="ring-1 ring-zinc-100 p-2 text-sm text-[#474747] focus:outline-none focus:ring-1 focus:ring-sky-800  rounded-lg" >
@@ -56,6 +112,7 @@ export default function Formulario() {
               <div className="flex flex-col space-y-2">
                 <label className="text-[#474747] text-sm">Órgão</label>
                 <select 
+                value={formData.orgao} onChange={(e)=>setFormData({...formData, orgao: e.target.value})}
                 required 
 
                  className="ring-1 ring-zinc-100 p-2 text-sm text-[#474747] focus:outline-none focus:ring-1 focus:ring-sky-800 rounded-lg" >
@@ -72,7 +129,9 @@ export default function Formulario() {
               </div>
               <div className="flex flex-col space-y-2">
                 <label className="text-[#474747] text-sm">Observação</label>
-                <textarea placeholder="Escreva aqui sua observação..."
+                <textarea 
+                value={formData.observacao} onChange={(e)=>setFormData({...formData, observacao: e.target.value})}
+                placeholder="Escreva aqui sua observação..."
                   className="ring-1 p-2 ring-zinc-100 text-sm text-[#474747] focus:outline-none focus:ring-1 focus:ring-sky-800  rounded-lg" >
                 </textarea>
 
@@ -81,7 +140,7 @@ export default function Formulario() {
             </div>
           </div>
           <button type="submit" className="bg-sky-800 w-[50%] mt-10 hover:bg-sky-700 cursor-pointer text-white flex justify-center p-2 rounded-lg  duration-300">
-            Entrar
+            Enviar
           </button><input type="text" placeholder="" />
         </form>
       </div>
