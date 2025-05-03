@@ -49,6 +49,7 @@ export default function Formulario() {
                     queryKey: ['delegados']
                 })
 
+                alert("registo adicionado")
                 clearForm()
                 
                // onClose(false)
@@ -57,7 +58,7 @@ export default function Formulario() {
             } catch (error) {
                 console.log(error)
                 //setLoading(false)
-                alert("registo adicionado com sucesso")
+                alert("falha ao adicionar registo ")
             }
         }
         
