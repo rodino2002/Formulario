@@ -11,6 +11,10 @@ import { useState } from "react"
 // }
 
 export default function Formulario() {
+
+  
+  //const url = import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
+  
   const queryClient = useQueryClient()
 
     const [formData, setFormData] = useState({
@@ -28,6 +32,7 @@ export default function Formulario() {
       observacao: "",})
   }
 
+
     async function addData(e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault();
     
@@ -43,7 +48,7 @@ export default function Formulario() {
     
             try {
                // setLoading(true)
-                await axios.post(`/api/delegados`, params)
+                await axios.post(`api/delegados`, params)
     
                 queryClient.invalidateQueries({
                     queryKey: ['delegados']
