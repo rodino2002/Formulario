@@ -15,7 +15,7 @@ type Props = {
   observacao: string
 }
 export default function Dashboard() {
-  //const url =  import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
+  const url =  import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
 
   const [dataList, setDataList] = useState<Props[]>([])
   const [showModalEdit, setShowModalEdit] = useState(false)
@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   async function getDataList() {
     try {
-      const { data } = await axios.get(`api/delegados`)
+      const { data } = await axios.get(`${url}/delegados`)
       setDataList(data)
       return data
     } catch (error) {

@@ -13,7 +13,7 @@ import { useState } from "react"
 export default function Formulario() {
 
   
-  //const url = import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
+  const url = import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
   
   const queryClient = useQueryClient()
 
@@ -48,7 +48,7 @@ export default function Formulario() {
     
             try { 
                // setLoading(true)
-                await axios.post(`/delegados`, params, 
+                await axios.post(`${url}/delegados`, params, 
                   {
                     withCredentials: true, // importante para enviar cookies/sessão
                     headers: {
