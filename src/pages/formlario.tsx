@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { useState } from "react"
+import { toast, ToastContainer } from "react-toastify"
 
 // type dataType = {
 //   id: number
@@ -64,6 +65,17 @@ export default function Formulario() {
 
                 alert("registo adicionado")
                 clearForm()
+                toast.success('Registo adicionado com suceso!', {
+                  className: 'text-[#474747] ',
+                  position: 'bottom-right',
+                  autoClose: 3000,
+                  pauseOnFocusLoss: false,
+                  icon: <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24.5" cy="24.5" r="24.5" fill="#1FC16B" fill-opacity="0.18" />
+                      <path d="M35 17.5L21.25 31.25L15 25" stroke="#1FC16B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+  
+              })
                 
                // onClose(false)
                 //setLoading(false)
@@ -71,7 +83,17 @@ export default function Formulario() {
             } catch (error) {
                 console.log(error)
                 //setLoading(false)
-                alert("falha ao adicionar registo ")
+                toast.error(`Falha ao adicionar registo`, {
+                  className: 'text-[#474747] ',
+                  position: 'bottom-right',
+                  autoClose: 3000,
+                  pauseOnFocusLoss: false,
+                  icon: <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24.5" cy="24.5" r="24.5" fill="#FB3748" fillOpacity="0.16" />
+                      <path d="M32.5 17.5L17.5 32.5" stroke="#FB3748" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M17.5 17.5L32.5 32.5" stroke="#FB3748" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>,
+              })
             }
         }
         
@@ -79,6 +101,7 @@ export default function Formulario() {
 
   return (
     <>
+    <ToastContainer/>
     <div className="ml-10 pt-2">
           <img src="icon_02.png" className="w-10"/>
         </div>

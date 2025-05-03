@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import ModalEdit from "../components/editModal"
 import ModalDelete from "../components/deleteModal"
+import { toast } from "react-toastify"
 
 type Props = {
   id: number
@@ -15,7 +16,7 @@ type Props = {
   observacao: string
 }
 export default function Dashboard() {
-  const url =  import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
+  const url = import.meta.env.PROD ? import.meta.env.VITE_PRODUCTION_API_URL : import.meta.env.VITE_PRODUCTION_API_URL
 
   const [dataList, setDataList] = useState<Props[]>([])
   const [showModalEdit, setShowModalEdit] = useState(false)
@@ -49,7 +50,7 @@ export default function Dashboard() {
 
   async function deleteData(id: number | string) {
     try {
-      await axios.delete(`/delegados/${id}`, 
+      await axios.delete(`${url}/delegados/${id}`,
         {
           withCredentials: true, // importante para enviar cookies/sessão
           headers: {
@@ -63,9 +64,31 @@ export default function Dashboard() {
       })
 
       setShowModalDelete(false)
+      toast.success('Registo eliminado com suceso!', {
+        className: 'text-[#474747] ',
+        position: 'bottom-right',
+        autoClose: 3000,
+        pauseOnFocusLoss: false,
+        icon: <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24.5" cy="24.5" r="24.5" fill="#1FC16B" fill-opacity="0.18" />
+            <path d="M35 17.5L21.25 31.25L15 25" stroke="#1FC16B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+    })
 
     } catch (error) {
       console.log(error)
+      toast.error(`Falha ao eliminar registo`, {
+        className: 'text-[#474747] ',
+        position: 'bottom-right',
+        autoClose: 3000,
+        pauseOnFocusLoss: false,
+        icon: <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24.5" cy="24.5" r="24.5" fill="#FB3748" fillOpacity="0.16" />
+          <path d="M32.5 17.5L17.5 32.5" stroke="#FB3748" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M17.5 17.5L32.5 32.5" stroke="#FB3748" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>,
+      })
     }
   }
 

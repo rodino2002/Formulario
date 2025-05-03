@@ -6,7 +6,6 @@ type params={
 }
 
 export default function ModalDelete({deleteFunction, idUser, setShowModalDelete}:params){
-
     
     return(
         <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
