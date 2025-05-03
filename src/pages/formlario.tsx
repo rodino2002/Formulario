@@ -48,7 +48,7 @@ export default function Formulario() {
     
             try {
                // setLoading(true)
-                await axios.post(`api/delegados`, params)
+                await axios.post(`/delegados`, params)
     
                 queryClient.invalidateQueries({
                     queryKey: ['delegados']
