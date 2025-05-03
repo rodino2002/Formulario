@@ -63,7 +63,6 @@ export default function Formulario() {
                     queryKey: ['delegados']
                 })
 
-                alert("registo adicionado")
                 clearForm()
                 toast.success('Registo adicionado com suceso!', {
                   className: 'text-[#474747] ',
