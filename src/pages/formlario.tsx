@@ -46,9 +46,17 @@ export default function Formulario() {
             }
             
     
-            try {
+            try { 
                // setLoading(true)
-                await axios.post(`/delegados`, params)
+                await axios.post(`/delegados`, params, 
+                  {
+                    withCredentials: true, // importante para enviar cookies/sessão
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                
+                )
     
                 queryClient.invalidateQueries({
                     queryKey: ['delegados']
