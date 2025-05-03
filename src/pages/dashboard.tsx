@@ -49,7 +49,14 @@ export default function Dashboard() {
 
   async function deleteData(id: number | string) {
     try {
-      await axios.delete(`/delegados/${id}`, { withCredentials: true })
+      await axios.delete(`/delegados/${id}`, 
+        {
+          withCredentials: true, // importante para enviar cookies/sessão
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
 
       queryClient.invalidateQueries({
         queryKey: ['delegados']
