@@ -24,7 +24,7 @@ export default function Dashboard() {
   const [idUser, setIdUser] = useState<number | string>(0)
   const [searchInput, setSearchInput] = useState<string | undefined>("")
   const [filteredData, setFilteredData] = useState<Props[]>([])
-  const perPage = 100
+  const perPage = 100 //quantidade de dados na tela
 
   async function getDataList() {
     try {
