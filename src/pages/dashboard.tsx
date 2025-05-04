@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import ModalEdit from "../components/editModal"
 import ModalDelete from "../components/deleteModal"
-import { toast } from "react-toastify"
+import { toast, ToastContainer } from "react-toastify"
 
 type Props = {
   id: number
@@ -22,6 +22,9 @@ export default function Dashboard() {
   const [showModalEdit, setShowModalEdit] = useState(false)
   const [itemdata, setItemdata] = useState<Props | null>(null)
   const [idUser, setIdUser] = useState<number | string>(0)
+  const [searchInput, setSearchInput] = useState<string | undefined>("")
+  const [filteredData, setFilteredData] = useState<Props[]>([])
+  const perPage = 100
 
   async function getDataList() {
     try {
@@ -45,11 +48,12 @@ export default function Dashboard() {
   })
 
   const [showModalDelete, setShowModalDelete] = useState(false)
-  console.log(showModalDelete)
   const queryClient = useQueryClient()
+  const [loadingDelete, setLoadingDelete] = useState(false)
 
   async function deleteData(id: number | string) {
     try {
+      setLoadingDelete(true)
       await axios.delete(`${url}/delegados/${id}`,
         {
           withCredentials: true, // importante para enviar cookies/sessão
@@ -63,6 +67,7 @@ export default function Dashboard() {
         queryKey: ['delegados']
       })
 
+      setLoadingDelete(false)
       setShowModalDelete(false)
       toast.success('Registo eliminado com suceso!', {
         className: 'text-[#474747] ',
@@ -78,6 +83,7 @@ export default function Dashboard() {
 
     } catch (error) {
       console.log(error)
+      setLoadingDelete(false)
       toast.error(`Falha ao eliminar registo`, {
         className: 'text-[#474747] ',
         position: 'bottom-right',
@@ -87,16 +93,56 @@ export default function Dashboard() {
           <circle cx="24.5" cy="24.5" r="24.5" fill="#FB3748" fillOpacity="0.16" />
           <path d="M32.5 17.5L17.5 32.5" stroke="#FB3748" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M17.5 17.5L32.5 32.5" stroke="#FB3748" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>,
+        </svg>
       })
     }
   }
 
+  useEffect(() => {
+  if (dataList?.length) {
+    setFilteredData(dataList?.slice(0, perPage)); // Adiciona os dados iniciais
+  }
+}, [dataList]);
+
+const handleSearch = (param: string | undefined) => {
+  if (param?.trim()) {
+    const filtered = dataList?.filter((item) => {
+      const searchTerm = param?.toLowerCase();
+      return (
+        item?.nome?.toString().toLowerCase().includes(searchTerm) ||
+        item?.atributo?.toString().toLowerCase().includes(searchTerm) ||
+        item?.orgao?.toString().toLowerCase().includes(searchTerm)||
+        item?.observacao?.toString().toLowerCase().includes(searchTerm)
+      )
+    });
+   
+    setFilteredData(filtered);
+  } else {
+      
+    setFilteredData(dataList); // Retorna ao estado completo se o campo de pesquisa estiver vazio
+  }
+};
+
+
+const handleKeyDown = (event: any) => {
+  if (event.key === "Enter" || event.key === "Backspace") {
+    handleSearch(searchInput);
+  }
+  if (event.target.value) {
+    handleSearch(event.target.value);
+  }
+};
+
+useEffect(()=>{
+  handleSearch(searchInput)
+}, [searchInput])
+
   return (
     <>
+    <ToastContainer/>
       <Header />
-      <div className="flex justify-center mt-10  ">
-        <div className="flex justify-between items-center h-10 w-[60%]">
+      <div className="flex justify-center mt-10">
+        <div className="flex justify-between items-center h-10 w-[75%]">
           <div className=" p-4 place-items-center text-zinc-700 font-semibold">
             <a className="bg-sky-800 p-2 text-white rounded-lg hover:bg-sky-700 duration-300 cursor-pointer" href='/inscricao' target="_blank">Cadastrar</a>
           </div>
@@ -104,10 +150,10 @@ export default function Dashboard() {
             <input
               type="search"
               className="ring-1 ring-[#C8D1E1] focus:outline-none focus:ring-1 focus:ring-[#969696] rounded-full w-80 p-2 placeholder-[#C8D1E1] text-sm text-[#474747] ${styleInput} "
-              //value={searchInput}
+              value={searchInput}
               placeholder="Pesquise..."
-            //onChange={(e) => setSearchInput(e.target.value)}
-            //onKeyDown={handleKeyDown}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             />
             <button
               type="submit"
@@ -131,31 +177,36 @@ export default function Dashboard() {
         </div>
       </div>
       <div className="place-items-center ">
-        <div className="mt-10 rounded-lg p-1 ring-1 ring-zinc-100">
+        
+        <div className="mt-10 relative">
+        <p className="text-sm text-[#474747]">Total de Registos: <span className="font-semibold">{filteredData?.length}</span></p>
+        <div className="mt-2 rounded-lg p-1 ring-1 ring-zinc-100">
           <table className="rounded-lg ring-1 ring-sky-50 w-full">
             <thead className=" bg-sky-50 h-14">
               <tr className="">
-                <th className="text-center ">Nome</th>
-                <th className="text-center">Atributo</th>
-                <th className="text-center">Órgão</th>
-                <th className="text-center">Observação</th>
-                <th className="text-center">Ações</th>
+                <th className="text-center w-[20%]">Nome</th>
+                <th className="text-center  w-[20%]">Atributo</th>
+                <th className="text-center  w-[20%]">Órgão</th>
+                <th className="text-center  w-[20%]">Observação</th>
+                <th className="text-center  w-[20%]">Ações</th>
               </tr>
             </thead>
 
-            <tbody>
-              {Array.isArray(dataList) && dataList?.map((item) =>
+            <tbody className="bg-zinc-700">
+            
+               
+              {Array.isArray(filteredData) && filteredData?.map((item) =>
                 <tr className=" p-2 text-sm h-14 odd:bg-white even:bg-[#F8FAFC] hover:bg-zinc-100 duration-300 ">
                   <td className="text-center p-4">{item?.nome}</td>
                   <td className="text-center p-4">{item?.atributo}</td>
                   <td className="text-center p-4"> {item?.orgao} </td>
                   <td className="text-center" >{item?.observacao}</td>
-                  <td className="flex space-x-1 items-center px-4">
+                  <td className="flex space-x-1 items-center px-20">
 
                     {/*editar */}
                     <p className="mt-4">
                       <svg
-                        className="group-hover:text-white text-[#1FC16B]"
+                        className="group-hover:text-white text-[#1FC16B] cursor-pointer"
                         xmlns="http://www.w3.org/2000/svg"
                         width="30"
                         height="30"
@@ -197,7 +248,7 @@ export default function Dashboard() {
                         }
 
                         }
-                        className="group-hover:text-white text-[#EB5656]"
+                        className="group-hover:text-white text-[#EB5656] cursor-pointer"
                         xmlns="http://www.w3.org/2000/svg"
                         width="30"
                         height="30"
@@ -223,11 +274,14 @@ export default function Dashboard() {
                   </td>
                 </tr>)}
 
-
-
             </tbody>
+            
           </table>
-          {showModalDelete && <ModalDelete setShowModalDelete={setShowModalDelete} deleteFunction={deleteData} idUser={idUser} />}
+        </div>
+          {showModalDelete && <ModalDelete setShowModalDelete={setShowModalDelete} deleteFunction={deleteData} idUser={idUser} loading={loadingDelete}/>}
+          
+          {filteredData?.length === 0 &&<p className="flex justify-center mt-4">Nenhum registo encontrado.</p>}
+
         </div>
 
       </div>

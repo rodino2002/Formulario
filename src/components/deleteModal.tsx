@@ -2,10 +2,11 @@ type params={
     deleteFunction: (id:number|string)=>void
     idUser: number | string
     //onClose: (e:any)=>void
-    setShowModalDelete: (e:boolean)=>void
+    setShowModalDelete: (e:boolean)=>void,
+    loading: boolean
 }
 
-export default function ModalDelete({deleteFunction, idUser, setShowModalDelete}:params){
+export default function ModalDelete({deleteFunction, idUser, setShowModalDelete, loading}:params){
     
     return(
         <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -30,21 +31,32 @@ export default function ModalDelete({deleteFunction, idUser, setShowModalDelete}
                       </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 space-x-2">
+                  <button type="button"
+                    onClick={() => {
+                      setShowModalDelete(false)
+                    }}
+                     className="cursor-pointer mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 ml-2
+                      text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset
+                       hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                        Cancelar
+                       </button>
                     <button type="button"
                     onClick={() => {
                       //setShowModalDelete(false)
                       deleteFunction(idUser);
                     }}
-                     className="cursor-pointer inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm 
-                     font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto">Eliminar</button>
-                    <button type="button"
-                    onClick={() => {
-                      setShowModalDelete(false)
-                    }}
-                     className="cursor-pointer mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2
-                      text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset
-                       hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancelar</button>
+                    disabled={loading?true:false}
+                     className={`${!loading&&"cursor-pointer"} inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm 
+                     font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto`}>
+                      {loading?<span className="w-full"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            className={`animate-spin lucide lucide-loader-circle-icon lucide-loader-circle`}>
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></span>:"Eliminar"
+
+            }
+                     </button>
+                    
                   </div>
                 </div>
               </div>

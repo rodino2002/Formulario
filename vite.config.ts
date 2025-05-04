@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.PROD? env.VITE_PRODUCTION_API_URL: env.VITE_DEVELOPMENT_API_URL , // Usa só a URL da API em dev
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\//, '')
+          rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
     }
