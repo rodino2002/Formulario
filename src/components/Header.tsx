@@ -5,7 +5,7 @@ import { useState } from "react"
 import LogoutModal from "./logoutModal"
 
 export function Header() {
-  const user = localStorage.getItem("user")
+  const user = localStorage.getItem("usuario")
   const [showModalLogout, setShowModalDelete] = useState(false)
 
 

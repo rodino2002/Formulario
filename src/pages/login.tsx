@@ -1,5 +1,6 @@
 //import { useState } from 'react'
 
+import axios from "axios"
 import { useState } from "react"
 import { useNavigate } from "react-router"
 import { toast, ToastContainer } from "react-toastify"
@@ -9,16 +10,35 @@ export default function Login() {
   //const {login, isAuthenticated} = useContext(AuthContext)
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [_userData, setUserData] = useState()
 
   const navigate = useNavigate()
+  const url = import.meta.env.PROD? import.meta.env.VITE_PRODUCTION_API_URL:  import.meta.env.VITE_DEVELOPMENT_API_URL  
 
   async function handlerLogin(event: React.FormEvent) {
     event.preventDefault();
+    
+    // localStorage.setItem("user", email); // chave correta sem espaço
+    //   navigate('/');
 
-    if (email === 'rodino@gmail.com' && senha === '123') {
-      localStorage.setItem("user", email); // chave correta sem espaço
-      navigate('/');
-    } else {
+    const params = {
+      email: email,
+      password: senha
+    }
+    try {
+      setLoading(true)
+      const {data} = await axios.post(`${url}/login`, params)
+      
+      setUserData(data.user)
+      localStorage.setItem("usuario", data?.nome);
+      setLoading(false)
+       // chave correta sem espaço
+       navigate('/');
+      
+    } catch (error) {
+      setLoading(false)
+      console.error("Erro ao fazer login:", error);
       toast.error("Credenciais Inválidas", {
         className: 'text-[#474747]',
         autoClose: 3000,
@@ -31,7 +51,7 @@ export default function Login() {
           </svg>
         )
       });
-    }
+    } 
   }
 
 
@@ -53,8 +73,17 @@ export default function Login() {
             <label className="text-[#474747] text-sm">Palavrapasse</label>
             <input required type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="palavra passe" className="ring-1 ring-zinc-100 p-2 text-sm text-[#474747] focus:outline-none focus:ring-1 focus:ring-[#969696] rounded-lg" />
           </div>
-          <button type="submit" className="bg-sky-800 hover:bg-sky-950 cursor-pointer text-white flex justify-center p-2 rounded-lg  duration-300">
-            Entrar
+          <button type="submit" disabled={loading} 
+          className={`bg-sky-800 hover:bg-sky-950 ${loading?"":"cursor-pointer"} text-white flex justify-center p-2 rounded-lg  duration-300"`}>
+            { loading ?
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            className="animate-spin lucide lucide-loader-circle-icon lucide-loader-circle">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> :
+               "Entrar"
+
+            }
+
           </button>
         </form>
       </div>
